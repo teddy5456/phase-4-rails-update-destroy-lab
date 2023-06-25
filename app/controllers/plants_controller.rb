@@ -1,21 +1,52 @@
-class PlantsController < ApplicationController
 
-  # GET /plants
+class PlantsController < ApplicationController
   def index
     plants = Plant.all
     render json: plants
   end
 
-  # GET /plants/:id
   def show
-    plant = Plant.find_by(id: params[:id])
+    plant = Plant.find(params[:id])
     render json: plant
   end
 
-  # POST /plants
+
+
+  def update
+    plant = Plant.find(params[:id])
+    if plant.update(plant_params)
+      plant.reload
+      render json: {
+        id: plant.id,
+        name: plant.name,
+        image: plant.image,
+        price: plant.price,
+        is_in_stock: plant.is_in_stock
+      }, status: :ok
+    else
+      render json: { errors: plant.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+  
+  
+
+
+
   def create
-    plant = Plant.create(plant_params)
-    render json: plant, status: :created
+    plant = Plant.new(plant_params)
+    if plant.save
+      render json: plant, status: :created
+    else
+      render json: { errors: plant.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  
+
+  def destroy
+    plant = Plant.find(params[:id])
+    plant.destroy
+    head :no_content
   end
 
   private
