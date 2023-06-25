@@ -16,18 +16,11 @@ class PlantsController < ApplicationController
     plant = Plant.find(params[:id])
     if plant.update(plant_params)
       plant.reload
-      render json: {
-        id: plant.id,
-        name: plant.name,
-        image: plant.image,
-        price: plant.price,
-        is_in_stock: plant.is_in_stock
-      }, status: :ok
+      render json: plant, tatus: :created
     else
       render json: { errors: plant.errors.full_messages }, status: :unprocessable_entity
     end
   end
-  
   
 
 
